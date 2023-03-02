@@ -18,7 +18,7 @@ jobs:
           distribution: 'corretto'
 
       - name: Build JAR File
-        run: mvn build
+        run: mvn clean package
 
       - name: Login to GHCR
         uses: docker/login-action@v2
