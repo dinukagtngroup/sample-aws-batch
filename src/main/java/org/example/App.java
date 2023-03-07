@@ -18,7 +18,7 @@ public class App {
             int div = 10/0;
         } catch (Exception e) {
             logger.tagJob("DivisionByZeroError");
-            return;
+            throw new RuntimeException("DivisionByZeroError");
         }
 
         logger.tagJob("AllGood");
