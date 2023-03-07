@@ -29,6 +29,11 @@ public class AWSLogger {
 	}
 
 	public void tagJobMultiple(String jobARN, Map<String, String> tags) {
+		if (isAnArrayJob()) {
+			System.out.println("WARN: Tagging is not supported in Array Jobs.");
+			return;
+		}
+
 		Consumer<TagResourceRequest.Builder> tagResourceRequestConsumer = request -> request.resourceArn(jobARN).tags(tags);
 		this.batchClient.tagResource(tagResourceRequestConsumer);
 	}
@@ -85,5 +90,9 @@ public class AWSLogger {
 			throw new RuntimeException("Unable to read Job Attempt Number from environment variables.");
 		}
 		return attemptNumber;
+	}
+
+	private boolean isAnArrayJob() {
+		return System.getenv("AWS_BATCH_JOB_ARRAY_INDEX") != null;
 	}
 }
