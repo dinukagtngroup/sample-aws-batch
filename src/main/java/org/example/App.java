@@ -1,6 +1,11 @@
 package org.example;
+
+import org.example.awslogger.AWSLogger;
+
 public class App {
     public static void main( String[] args ) {
+        AWSLogger logger = AWSLogger.getInstance();
+
         System.out.println( "Hello World!" );
 
         int count = 0;
@@ -9,7 +14,12 @@ public class App {
         }
 
         System.out.println("Count is " + count);
+        try {
+            int div = 10/0;
+        } catch (Exception e) {
+            logger.tagJob("DivisionByZeroError");
+        }
 
-        int div = 14/0;
+        logger.tagJob("AllGood");
     }
 }
