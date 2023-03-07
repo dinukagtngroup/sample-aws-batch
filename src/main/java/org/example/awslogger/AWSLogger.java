@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 
 public class AWSLogger {
 	private final BatchClient batchClient;
+	private String jobARN;
 
 
 	private static AWSLogger instance;
@@ -29,7 +30,14 @@ public class AWSLogger {
 
 	public void tagJobMultiple(String jobARN, Map<String, String> tags) {
 		Consumer<TagResourceRequest.Builder> tagResourceRequestConsumer = request -> request.resourceArn(jobARN).tags(tags);
-		System.out.println(this.batchClient.tagResource(tagResourceRequestConsumer));
+		this.batchClient.tagResource(tagResourceRequestConsumer);
+	}
+
+	public void tagJobMultiple(Map<String, String> tags) {
+		String jobID = getJobIDFromEnvironment();
+		String jobARN = retrieveJobARNFromJobID(jobID);
+
+		tagJobMultiple(jobARN, tags);
 	}
 
 	public void tagJobSingle(String jobARN, String tagKey, String tagValue) {
@@ -46,7 +54,10 @@ public class AWSLogger {
 		tagJobSingle(jobARN, "job_status_" + attemptNo, tagValue);
 	}
 
+
 	private String retrieveJobARNFromJobID(String jobID) throws RuntimeException {
+		if (this.jobARN != null) return this.jobARN;
+
 		Consumer<DescribeJobsRequest.Builder> builderConsumer = request -> request.jobs(jobID);
 		DescribeJobsResponse describeJobsResponse = this.batchClient.describeJobs(builderConsumer);
 
@@ -55,6 +66,7 @@ public class AWSLogger {
 		}
 
 		JobDetail jobDetail = describeJobsResponse.jobs().get(0);
+		this.jobARN = jobDetail.jobArn();
 		return jobDetail.jobArn();
 
 	}
