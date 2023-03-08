@@ -17,10 +17,10 @@ public class App {
         try {
             int div = 10/0;
         } catch (Exception e) {
-            logger.tagJob("DivisionByZeroError");
+            logger.tagJob("FAIL", "Cannot divide by Zero.");
             throw new RuntimeException("DivisionByZeroError");
         }
 
-        logger.tagJob("AllGood");
+        logger.tagJob("SUCCESS");
     }
 }

@@ -51,12 +51,17 @@ public class AWSLogger {
 		this.tagJobMultiple(jobARN, map);
 	}
 
-	public void tagJob(String tagValue) {
-		String jobID = getJobIDFromEnvironment();
-		String attemptNo = getJobAttemptNumberFromEnvironment();
-		String jobARN = retrieveJobARNFromJobID(jobID);
+	public void tagJob(String status, String statusReason) {
+		Map<String, String> tags = new HashMap<>();
+		tags.put("job_status", status);
+		if (statusReason != null)
+			tags.put("job_status_reason", statusReason);
 
-		tagJobSingle(jobARN, "job_status_" + attemptNo, tagValue);
+		tagJobMultiple(tags);
+	}
+
+	public void tagJob(String status) {
+		tagJob(status, null);
 	}
 
 
