@@ -65,6 +65,14 @@ public class AWSLogger {
 		tagJob(status, null);
 	}
 
+	public void tagJobSuccess() {
+		tagJob("SUCCESS");
+	}
+
+	public void tagJobFailure(String failReason) {
+		tagJob("FAILED", failReason);
+	}
+
 
 	private String retrieveJobARNFromJobID(String jobID) throws RuntimeException {
 		if (this.jobARN != null) return this.jobARN;
