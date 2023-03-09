@@ -31,10 +31,11 @@ public class AWSLogger {
 	public void tagJobMultiple(String jobARN, Map<String, String> tags) {
 		if (isAnArrayJob()) {
 			System.out.println("WARN: Tagging is not supported in Array Jobs.");
-			return;
+			jobARN = extractParentJobARNFromChildJobARN(jobARN, getArrayJobIndex());
 		}
 
-		Consumer<TagResourceRequest.Builder> tagResourceRequestConsumer = request -> request.resourceArn(jobARN).tags(tags);
+		final String modifiedJobARN = jobARN;
+		Consumer<TagResourceRequest.Builder> tagResourceRequestConsumer = request -> request.resourceArn(modifiedJobARN).tags(tags);
 		this.batchClient.tagResource(tagResourceRequestConsumer);
 	}
 
@@ -99,5 +100,17 @@ public class AWSLogger {
 
 	private boolean isAnArrayJob() {
 		return System.getenv("AWS_BATCH_JOB_ARRAY_INDEX") != null;
+	}
+
+	private String getArrayJobIndex() {
+		String attemptNumber = System.getenv("AWS_BATCH_JOB_ARRAY_INDEX");
+		if (attemptNumber == null) {
+			throw new RuntimeException("Unable to read Array Job Index from environment variables.");
+		}
+		return attemptNumber;
+	}
+
+	private String extractParentJobARNFromChildJobARN(String childJobARN, String jobIndex) {
+		return childJobARN.substring(0, childJobARN.length() - jobIndex.length());
 	}
 }
