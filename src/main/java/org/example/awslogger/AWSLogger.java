@@ -119,6 +119,6 @@ public class AWSLogger {
 	}
 
 	private String extractParentJobARNFromChildJobARN(String childJobARN, String jobIndex) {
-		return childJobARN.substring(0, childJobARN.length() - jobIndex.length());
+		return childJobARN.substring(0, childJobARN.length() - jobIndex.length() -1);
 	}
 }
