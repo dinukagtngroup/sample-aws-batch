@@ -66,6 +66,7 @@ public class AWSLogger {
 	}
 
 	public void tagJobSuccess() {
+		if (isAnArrayJob()) return;
 		tagJob("SUCCESS");
 	}
 
